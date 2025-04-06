@@ -208,6 +208,7 @@ def sell_bind() -> None:
         item_inv_cpy.Owner = inventory_manager.Owner
         inventory_manager.AddInventoryToBackpack(item_inv_cpy)
         inventory_manager.PlayerSoldItem(item_inv_cpy, 1)
+        inventory_manager.UpdateBackpackInventoryCount()
 
         # Increase BAR pickup stats
         inventory_manager.ClientConditionalIncrementPickupStats(item_inv)
