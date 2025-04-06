@@ -1,5 +1,5 @@
 [project]
-name = "cleaning_pandora_ported"
+name = "cleaning_up_pandora_plus"
 version = "1.0"
 authors = [{ name = "identity" }]
 description = """\
@@ -7,6 +7,7 @@ Adds the ability to sell items that are on the floor or in your backpack by pres
 NOTE:\n<ul><li>Items that are favorited or equipped cannot be sold.</li>
 <li>Controller users need to press 'Start' to sell items from their backpack</li>
 <li>All sold items can be bought back from any vendor.</li></ul>
+Credits to Deceptix_ for the original code
 """
 
 [project.urls]
@@ -15,9 +16,9 @@ Changelog = ""
 
 [tool.sdkmod]
 name = "Cleaning Up Pandora+"
-version = "1.0"
+version = "0.1.0"
 license = {name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }
-download = ""
+download = "https://github.com/infernumx/bl-sdk-mods/releases/download/cleaning-up-pandora-plus/cleaning_pandora_plus.sdkmod"
 
 [tool.sdkmod_release_script]
 files = ["*.md", "*.py"]
