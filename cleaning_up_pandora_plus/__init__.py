@@ -22,7 +22,6 @@ from unrealsdk.hooks import (
     prevent_hooking_direct_calls,
 )  # type:ignore
 
-import unrealsdk.logging as logger
 
 __all__: tuple[str, ...] = (
     "hooks",
