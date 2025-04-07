@@ -238,7 +238,6 @@ def on_use_backpack(
     # Only process on key press, uevent == 1 is key release
     if args.uevent == 0:
         selected_item: WillowInventory = obj.GetSelectedThing()
-        print("on_use_backpack:", selected_item.GetMark())
 
         # Plays an error sound if player tries to sell an item that is either equipped or favorited
         if (
