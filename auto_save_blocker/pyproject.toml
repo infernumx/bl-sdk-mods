@@ -1,0 +1,20 @@
+[project]
+name = "AutoSave Blocker"
+version = "1.0"
+authors = [{ name = "identity" }]
+description = """\
+F2 to toggle
+"""
+
+[project.urls]
+Changelog = ""
+
+
+[tool.sdkmod]
+name = "AutoSave Blocker"
+version = "1.0"
+license = {name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }
+download = ""
+
+[tool.sdkmod_release_script]
+files = ["*.md", "*.py"]
