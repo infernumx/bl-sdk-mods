@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# BL2 SDK Mod files
+*.sdkmod
