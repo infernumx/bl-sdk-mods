@@ -14,7 +14,7 @@ Changelog = ""
 name = "AutoSave Blocker"
 version = "1.0"
 license = {name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }
-download = ""
+download = "https://github.com/infernumx/bl-sdk-mods/releases/download/auto-save-blocker/auto_save_blocker.sdkmod"
 
 [tool.sdkmod_release_script]
 files = ["*.md", "*.py"]

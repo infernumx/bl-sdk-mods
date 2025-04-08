@@ -1,4 +1,4 @@
-from typing import Any  # type:ignore
+from typing import Any
 
 from mods_base import (
     hook,
@@ -7,10 +7,12 @@ from mods_base import (
     BoolOption,
     SliderOption,
     BaseOption,
-    NestedOption,
-    KeybindOption,
+    KeybindType,
+    GroupedOption,
     HookType,
-)  # type:ignore
+    Mod,
+)
+from mods_base.hook import PreHookRet
 from ui_utils import show_hud_message
 from unrealsdk import find_object, make_struct
 from unrealsdk.unreal import (
@@ -23,6 +25,7 @@ from unrealsdk.hooks import Block
 __all__: tuple[str, ...] = ("hooks", "keybinds", "options")
 
 save_block: bool = False
+mod: Mod | None = None
 
 
 @hook("WillowGame.WillowPlayerController:CanSaveGame")
@@ -31,10 +34,10 @@ def can_save_game(
     args: WrappedStruct,
     _ret: Any,
     _func: BoundFunction,
-) -> tuple[type[Block], bool] | bool:
+) -> PreHookRet:
     if save_block is True:
         return (Block, False)
-    return True
+    return (Block, True)
 
 
 @hook("WillowGame.WillowGameViewportClient:PostRender")
@@ -43,26 +46,30 @@ def post_render(
     args: WrappedStruct,
     _ret: Any,
     _func: BoundFunction,
-) -> bool:
+) -> PreHookRet:
     canvas = args.Canvas
 
-    if not canvas:
-        return True
+    if canvas is None:
+        return
 
     canvas.Font = find_object("Font", "UI_Fonts.Font_Willowbody_18pt")
-    x = text_position.children[0].value
-    y = text_position.children[1].value
+    x = text_settings.children[4].value
+    y = text_settings.children[5].value
     true_x = canvas.SizeX * (x / 1000)
     true_y = canvas.SizeX * (y / 1000)
 
     canvas.SetPos(true_x, true_y, 0)
     text = f"AutoSave Blocking: {save_block}"
-    rgba = {col: opt.value for col, opt in zip("rgba", color_option.children)}
+    rgba = {col: opt.value for col, opt in zip("rgba", text_settings.children[:4])}
     color = make_struct("Color", **rgba)
 
     canvas.SetDrawColorStruct(color)
-    canvas.DrawText(text, False, text_size.value / 100, text_size.value / 100)
-    return True
+    canvas.DrawText(
+        text,
+        False,
+        text_settings.children[6].value / 100,
+        text_settings.children[6].value / 100,
+    )
 
 
 @keybind("Toggle AutoSave Blocker", key="F2")
@@ -72,41 +79,46 @@ def save_block_bind() -> None:
     show_hud_message("[AutoSave Blocker]", f"Set to {save_block}")
 
 
-def on_enable_text_toggled(option: BoolOption, value: bool) -> None:
-    if value is True:
+@BoolOption("Enable Text", value=True)
+def enable_text(_: BoolOption, new_value: bool) -> None:
+    if mod is None or not mod.is_enabled:
+        return
+
+    if new_value:
         post_render.enable()
     else:
         post_render.disable()
 
 
-enable_text: BoolOption = BoolOption(
-    "Enable Text", value=True, on_change=on_enable_text_toggled
-)
+def on_mod_enable() -> None:
+    post_render.enable()
 
-color_option: NestedOption = NestedOption(
-    "Text Color",
-    [
+
+def on_mod_disable() -> None:
+    post_render.disable()
+
+
+text_settings: GroupedOption = GroupedOption(
+    "Text Settings",
+    (
         SliderOption("Red", value=255, min_value=0, max_value=255),
         SliderOption("Green", value=0, min_value=0, max_value=255),
         SliderOption("Blue", value=0, min_value=0, max_value=255),
         SliderOption("Alpha", value=215, min_value=0, max_value=255),
-    ],
-)
-
-text_position: NestedOption = NestedOption(
-    "Text Position",
-    [
         SliderOption("X", value=10, min_value=0, max_value=1000),
         SliderOption("Y", value=20, min_value=0, max_value=1000),
-    ],
-)
-
-text_size: SliderOption = SliderOption(
-    "Text Size", value=100, min_value=50, max_value=150
+        SliderOption("Size", value=100, min_value=50, max_value=150),
+    ),
 )
 
 hooks: tuple[HookType, ...] = (can_save_game, post_render)
-keybinds: tuple[KeybindOption, ...] = (save_block_bind,)
-options: tuple[BaseOption, ...] = (enable_text, color_option, text_position, text_size)
+keybinds: tuple[KeybindType, ...] = (save_block_bind,)
+options: tuple[BaseOption, ...] = (enable_text, text_settings)
 
-build_mod(hooks=hooks, keybinds=keybinds, options=options)
+mod = build_mod(
+    hooks=hooks,
+    keybinds=keybinds,
+    options=options,
+    on_enable=on_mod_enable,
+    on_disable=on_mod_disable,
+)
