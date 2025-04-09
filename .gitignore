@@ -175,3 +175,6 @@ cython_debug/
 
 # BL2 SDK Mod files
 *.sdkmod
+dev_sdkmod.py
+release_sdkmod.py
+mods_base/
