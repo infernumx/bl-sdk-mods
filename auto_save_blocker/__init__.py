@@ -26,6 +26,13 @@ __all__: tuple[str, ...] = ("hooks", "keybinds", "options")
 
 save_block: bool = False
 mod: Mod | None = None
+slider_red = SliderOption("Red", value=255, min_value=0, max_value=255)
+slider_green = SliderOption("Green", value=0, min_value=0, max_value=255)
+slider_blue = SliderOption("Blue", value=0, min_value=0, max_value=255)
+slider_alpha = SliderOption("Alpha", value=215, min_value=0, max_value=255)
+slider_x = SliderOption("X", value=10, min_value=0, max_value=1000)
+slider_y = SliderOption("Y", value=10, min_value=0, max_value=1000)
+slider_size = SliderOption("Size", value=100, min_value=50, max_value=150)
 
 
 @hook("WillowGame.WillowPlayerController:CanSaveGame")
@@ -36,6 +43,7 @@ def can_save_game(
     _func: BoundFunction,
 ) -> PreHookRet:
     if save_block is True:
+        show_hud_message("AutoSave Blocker", "Attempted game-save blocked.")
         return (Block, False)
     return (Block, True)
 
@@ -53,22 +61,27 @@ def post_render(
         return
 
     canvas.Font = find_object("Font", "UI_Fonts.Font_Willowbody_18pt")
-    x = text_settings.children[4].value
-    y = text_settings.children[5].value
+    x = slider_x.value
+    y = slider_y.value
     true_x = canvas.SizeX * (x / 1000)
     true_y = canvas.SizeX * (y / 1000)
 
     canvas.SetPos(true_x, true_y, 0)
     text = f"AutoSave Blocking: {save_block}"
-    rgba = {col: opt.value for col, opt in zip("rgba", text_settings.children[:4])}
-    color = make_struct("Color", **rgba)
+    color = make_struct(
+        "Color",
+        r=slider_red.value,
+        g=slider_green.value,
+        b=slider_blue.value,
+        a=slider_alpha.value,
+    )
 
     canvas.SetDrawColorStruct(color)
     canvas.DrawText(
         text,
         False,
-        text_settings.children[6].value / 100,
-        text_settings.children[6].value / 100,
+        slider_size.value / 100,
+        slider_size.value / 100,
     )
 
 
@@ -91,23 +104,27 @@ def enable_text(_: BoolOption, new_value: bool) -> None:
 
 
 def on_mod_enable() -> None:
-    post_render.enable()
+    # Workaround to disable text hook since it gets re-enabled regardless of the state of 'enable_text'
+    if post_render.get_active_count() > 0 and enable_text.value is False:
+        post_render.disable()
+    elif enable_text.value is True:
+        post_render.enable()
 
 
 def on_mod_disable() -> None:
     post_render.disable()
 
 
-text_settings: GroupedOption = GroupedOption(
+text_settings = GroupedOption(
     "Text Settings",
     (
-        SliderOption("Red", value=255, min_value=0, max_value=255),
-        SliderOption("Green", value=0, min_value=0, max_value=255),
-        SliderOption("Blue", value=0, min_value=0, max_value=255),
-        SliderOption("Alpha", value=215, min_value=0, max_value=255),
-        SliderOption("X", value=10, min_value=0, max_value=1000),
-        SliderOption("Y", value=20, min_value=0, max_value=1000),
-        SliderOption("Size", value=100, min_value=50, max_value=150),
+        slider_red,
+        slider_green,
+        slider_blue,
+        slider_alpha,
+        slider_x,
+        slider_y,
+        slider_size,
     ),
 )
 

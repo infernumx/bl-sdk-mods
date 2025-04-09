@@ -1,9 +1,10 @@
 [project]
-name = "AutoSave Blocker"
-version = "1.0"
+name = "auto_save_blocker"
+version = "1.0.1"
 authors = [{ name = "identity" }]
 description = """\
 F2 to toggle
+Displays text indicator of current status, as well as an HUD message when a save is attempted but blocked.
 """
 
 [project.urls]
@@ -12,7 +13,7 @@ Changelog = ""
 
 [tool.sdkmod]
 name = "AutoSave Blocker"
-version = "1.0"
+version = "1.0.1"
 license = {name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }
 download = "https://github.com/infernumx/bl-sdk-mods/releases/download/auto-save-blocker/auto_save_blocker.sdkmod"
 
