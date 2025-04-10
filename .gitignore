@@ -178,3 +178,4 @@ cython_debug/
 dev_sdkmod.py
 release_sdkmod.py
 mods_base/
+*.decompiled
