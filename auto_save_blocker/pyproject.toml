@@ -1,6 +1,6 @@
 [project]
 name = "auto_save_blocker"
-version = "1.0.1"
+version = "1.0.2"
 authors = [{ name = "identity" }]
 description = """\
 F2 to toggle
@@ -13,7 +13,7 @@ Changelog = ""
 
 [tool.sdkmod]
 name = "AutoSave Blocker"
-version = "1.0.1"
+version = "1.0.2"
 license = {name = "GPL3", url = "https://choosealicense.com/licenses/gpl-3.0/" }
 download = "https://github.com/infernumx/bl-sdk-mods/releases/download/auto-save-blocker/auto_save_blocker.sdkmod"
 

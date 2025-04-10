@@ -104,10 +104,7 @@ def enable_text(_: BoolOption, new_value: bool) -> None:
 
 
 def on_mod_enable() -> None:
-    # Workaround to disable text hook since it gets re-enabled regardless of the state of 'enable_text'
-    if post_render.get_active_count() > 0 and enable_text.value is False:
-        post_render.disable()
-    elif enable_text.value is True:
+    if enable_text.value is True:
         post_render.enable()
 
 
@@ -128,7 +125,7 @@ text_settings = GroupedOption(
     ),
 )
 
-hooks: tuple[HookType, ...] = (can_save_game, post_render)
+hooks: tuple[HookType, ...] = (can_save_game,)
 keybinds: tuple[KeybindType, ...] = (save_block_bind,)
 options: tuple[BaseOption, ...] = (enable_text, text_settings)
 
